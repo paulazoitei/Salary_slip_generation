@@ -1,10 +1,11 @@
 import random
 from faker import Faker
 from app import app
+from models.enum import RoleEnum
 from repositories.database import db
 from models.employee import Employee
 from datetime import datetime
-fake = Faker('ro_RO')
+fake = Faker('en_GB')
 
 def generate_fake_cnp():
 
@@ -18,15 +19,21 @@ def generate_fake_cnp():
 def populate_employees(n=50):
     with app.app_context():
         for _ in range(n):
+            name = fake.first_name()
+            surname = fake.last_name()
+
+
             employee = Employee(
                 name=fake.first_name(),
                 surname=fake.last_name(),
+                email=f"{name.lower()}.{surname.lower()}@testcompany.com",
                 salary_for_current_month=random.randint(3000, 10000),
                 number_of_vacation_days_taken=random.randint(0, 5),
                 additional_bonuses=random.choice([None, random.randint(200, 1500)]),
                 cnp=generate_fake_cnp(),
                 current_month=datetime.now().month,
-                current_year=datetime.now().year
+                current_year=datetime.now().year,
+                role=RoleEnum.EMPLOYEE,
             )
             db.session.add(employee)
         db.session.commit()

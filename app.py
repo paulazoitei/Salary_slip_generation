@@ -5,8 +5,9 @@ from repositories.database import db
 import  psycopg2
 from models.employee import Employee
 from flask_migrate import Migrate
-from controllers.excel_controller import excel_bp
-from controllers.pdf_controller import pdf_bp
+from controllers.generate_excel_controller import excel_bp
+from controllers.generate_pdf_controller import pdf_bp
+from controllers.send_pdf_employees_controller import send_pdf_bp
 
 class AppFactory:
     def __init__(self):
@@ -25,6 +26,7 @@ class AppFactory:
     def register_routes(self):
         self.app.register_blueprint(excel_bp)
         self.app.register_blueprint(pdf_bp)
+        self.app.register_blueprint(send_pdf_bp)
 
     def create_app(self):
           return self.app
