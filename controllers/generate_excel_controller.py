@@ -12,7 +12,8 @@ def generate_excel():
         return jsonify({'error': 'Invalid format: expected a list of IDs'}), 400
 
     missing_ids = GenerateExcelService.generate_excel(employee_ids=ids_param)
-
+    if missing_ids is None:
+        return jsonify({'error': 'Internal server error while generating Excel'}), 500
     if missing_ids:
         return jsonify({
             'message': 'Excel generated',
