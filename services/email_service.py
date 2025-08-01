@@ -1,17 +1,19 @@
-
 import smtplib
 from email.message import EmailMessage
 import mimetypes
 import os
+from dotenv import load_dotenv
 
 class EmailService:
     @staticmethod
     def sendemail(to, subject, body, attachments=[]):
         msg = EmailMessage()
         msg['Subject'] = subject
-        msg['From'] = "hr@endava.com"
+        msg['From'] = "azoiteipaul2003@gmail.com"
         msg['To'] = to
         msg.set_content(body)
+        email_user = os.getenv("EMAIL_USER")
+        email_pass = os.getenv("EMAIL_PASS")
 
         for filepath in attachments:
             if not os.path.isfile(filepath):
@@ -20,13 +22,16 @@ class EmailService:
             mime_type, mime_subtype = mime_type.split('/') if mime_type else ('application', 'octet-stream')
 
             with open(filepath, 'rb') as f:
-                msg.add_attachment(f.read(), maintype=mime_type, subtype=mime_subtype, filename=os.path.basename(filepath))
-
+                msg.add_attachment(
+                    f.read(),
+                    maintype=mime_type,
+                    subtype=mime_subtype,
+                    filename=os.path.basename(filepath)
+                )
 
         try:
-            with smtplib.SMTP("sandbox.smtp.mailtrap.io", 587,timeout=10) as server:
-                server.starttls()
-                server.login("5eed7e6a7561df", "a5b2b8c13f5e10")
+            with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+                server.login(email_user,email_pass)
                 server.send_message(msg)
         except Exception as e:
             print(f"[ERROR] Failed to send email to {to}: {e}")
